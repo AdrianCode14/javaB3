@@ -26,4 +26,6 @@
     <definition name="error" extends="template-main">
         <put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp" />
     </definition>
+
+
 </tiles-definitions>

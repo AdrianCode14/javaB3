@@ -1,4 +1,4 @@
-package com.spring.henallux.firstSpringProject.configuration;
+package com.spring.henallux.ecommerce.Configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.web.servlet.view.tiles3.TilesView;
 
 @Configuration
 public class TilesConfiguration {
-   /* @Bean
+   @Bean
     public TilesConfigurer tilesConfigurer() {
         final TilesConfigurer configurer = new TilesConfigurer();
         configurer.setDefinitions("WEB-INF/resources/tiles.xml");
@@ -22,5 +22,5 @@ public class TilesConfiguration {
         final TilesViewResolver resolver = new TilesViewResolver();
         resolver.setViewClass(TilesView.class);
         return resolver;
-    }*/
+    }
 }

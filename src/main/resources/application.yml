@@ -1,4 +1,23 @@
 server:
-  port:
+  port: 8081
   servlet:
-    contextPath:
+    contextPath: /firstSpring
+    encoding:
+      charset: UTF-8
+      enabled: true
+spring:
+  datasource:
+    password: admin
+    url: jdbc:mysql://localhost:3306/bookshopbd?user=root
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    mandatory-file-encoding: UTF-8
+
+paypal:
+  baseUrl: https://api-m.sandbox.paypal.com
+  clientId: AfU8BZvjjUfdv1YamBcsaBux8--rf9HUnG2aAw2GbdNGdAC0fWIG1tg2RrPWo2BHY7W3GlqB6GG0TuO-
+  secret: EB7xD_t0v4ag5FTt4Vn6HK0iW1kiXInKvFSAScdV57nLNgfK7_IsFjr5R9RaTjqtQIpZxLj0IB72I9HL
