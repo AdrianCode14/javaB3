@@ -22,7 +22,7 @@ public class UserDetailsServiceImplementation implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userDAO.findByEmail(email);
 
-        if (user !=null) {
+        if (user != null) {
             return user;
         }
 

@@ -1,5 +1,5 @@
 package com.spring.henallux.ecommerce.DataAccess.repository;
-
+/*
 import com.spring.henallux.ecommerce.DataAccess.entity.OrderEntity;
 import com.spring.henallux.ecommerce.DataAccess.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,3 +13,4 @@ public interface OrderRepository extends JpaRepository<OrderEntity, String> {
 
     OrderEntity findByPaypalOrderId(String paypalOrderId);
 }
+*/

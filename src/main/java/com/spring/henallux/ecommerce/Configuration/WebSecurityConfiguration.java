@@ -1,7 +1,7 @@
 package com.spring.henallux.ecommerce.Configuration;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -17,91 +17,57 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String LOGIN_REQUEST = "/login";
     private static final String[] AUTHORIZED_REQUESTS_ANYBODY = new String[]{
-            "/",
-            "/register",
-            "/cart",
-            "/cart/**",
-            "/product/**",
-            "/search",
-            "/infos/**",
-            "assets/**",
-            "/assets/**",
-            "/login",
-            "/search-product",
-            "/error",
-            "/society",
-            "/catalogue"
+            "/", "/register", "/cart", "/cart/**", "/product/**", "/search",
+            "/infos/**", "/assets/**", "/login", "/search-product",
+            "/error", "/society", "/catalogue"
     };
     private static final String[] AUTHORIZED_REQUESTS_ADMIN = new String[]{"/admin"};
 
-    private UserDetailsService userDetailsServiceImpl;
+    private final UserDetailsService userDetailsServiceImpl;
 
     @Autowired
     public WebSecurityConfiguration(UserDetailsService userDetailsServiceImplementation) {
         this.userDetailsServiceImpl = userDetailsServiceImplementation;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable(); // Disable because not necessary
-
-        http
-                .authorizeRequests() // We define the authorization here
-                .antMatchers(AUTHORIZED_REQUESTS_ADMIN).hasRole("ADMIN") // For the request to "/admin", the user needs to be an admin
-                .antMatchers(AUTHORIZED_REQUESTS_ANYBODY).permitAll() // For the request to the index page, any user has access
-                .anyRequest().authenticated() // For all the other requests, the user needs to be authenticated
-
-                .and()
-                .formLogin() // We define the login part here.
-                .successHandler((request, response, authentication) -> {
-                    // Custom logic if needed before redirecting
-                    response.sendRedirect("/"); // Redirect to the home page upon successful login
-                }) // provided by spring to redirect to the last request
-                .loginPage(LOGIN_REQUEST) // We specify a login page. Otherwise spring creates one by default
-                .usernameParameter("email") // The username parameter in the login page is "email"
-                .failureUrl("/login?error=true") // URL to return if login is failed
-                .permitAll() // To make the login page the available for any user
-
-                .and()
-                .logout() // We define the logout part here - By default : URL = "/logout"
-                //.logoutUrl("...") // If other link than "/logout" (that is by default)
-                .logoutSuccessUrl("/")  // URL to return if logout is successfull
-                .permitAll(); // To make the logout available for any user
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable() // Désactive CSRF pour simplifier (à utiliser avec précaution en production)
+                .authorizeRequests()
+                .antMatchers(AUTHORIZED_REQUESTS_ADMIN).hasRole("ADMIN")
+                .antMatchers(AUTHORIZED_REQUESTS_ANYBODY).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage(LOGIN_REQUEST)
+                .loginProcessingUrl(LOGIN_REQUEST)
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .permitAll()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+                .and()
+                .sessionManagement()
+                .invalidSessionUrl("/login?expired=true")
+                .maximumSessions(1)
+                .expiredUrl("/login?expired=true");
+    }
 
-    /**
-     * We provide the service which will return the user and the password encoder
-     * The service which is created here need to implement an interface provided by spring security.
-     * See @UserDetailsServiceImpl
-     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(new BCryptPasswordEncoder());
+        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
     }
-
-    /*
-    -- de base
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable(); // Disable the protection to the CRFS.
-        // Otherwise, we need to implement it and it is not necessary for our concerns
-
-        http
-                .authorizeRequests() // We define the authorization here
-                .antMatchers(AUTHORIZED_REQUESTS_ADMIN).hasRole("ADMIN") // For the request to "/admin", the user needs to be an admin
-                .antMatchers(AUTHORIZED_REQUESTS_ANYBODY).permitAll() // For the request to the index page, any user has access
-                .anyRequest().authenticated() // For all the other requests, the user needs to be authenticated
-
-                .and()
-                .formLogin() // We define the login part here.
-                .successHandler(new SavedRequestAwareAuthenticationSuccessHandler()) // This handler is already provided by spring to redirect to the last request
-                .loginPage(LOGIN_REQUEST) // We specify a login page. Otherwise spring create one by default
-                .permitAll() // To make the login page the available for any user
-
-                .and()
-                .logout() // We define the logout part here
-                .permitAll(); // To make the logout the available for any user
-    }*/
-
 }

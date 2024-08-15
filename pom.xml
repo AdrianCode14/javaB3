@@ -90,7 +90,10 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>7.0.2.Final</version> <!-- Utilisez la version que vous préférez -->
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

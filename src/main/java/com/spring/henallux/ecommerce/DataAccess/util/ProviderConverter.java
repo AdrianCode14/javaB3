@@ -1,86 +1,106 @@
 package com.spring.henallux.ecommerce.DataAccess.util;
-
+import org.springframework.security.core.GrantedAuthority;
+import java.util.stream.Collectors;
 import com.spring.henallux.ecommerce.Model.*;
 import com.spring.henallux.ecommerce.DataAccess.entity.*;
-import org.dozer.DozerBeanMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.function.Function;
 
 @Component
 public class ProviderConverter {
 
-    private DozerBeanMapper mapper = new DozerBeanMapper();
+    private <T, U> U convert(T source, Function<T, U> converter) {
+        return source != null ? converter.apply(source) : null;
+    }
 
     public User userEntityToUser(UserEntity userEntity) {
-        User user = new User();
-
-        mapper.map(userEntity, user);
-        user.setAuthorities(userEntity.getAuthorities());
-        user.setAccountNonExpired(userEntity.getAccountNonExpired());
-        user.setAccountNonLocked(userEntity.getAccountNonLocked());
-        user.setCredentialsNonExpired(userEntity.getCredentialsNonExpired());
-        user.setEnabled(userEntity.getEnabled());
-
-        return user;
+        return convert(userEntity, entity -> {
+            User user = new User();
+            user.setUserId(entity.getUserId());
+            user.setEmail(entity.getEmail());
+            user.setPassword(entity.getPassword());
+            user.setFirstName(entity.getFirstName());
+            user.setLastName(entity.getLastName());
+            user.setDeliveryAddress(entity.getDeliveryAddress());
+            user.setPhoneNumber(entity.getPhoneNumber());
+            user.setAuthorities(entity.getAuthorities());
+            user.setAccountNonExpired(entity.isAccountNonExpired());
+            user.setAccountNonLocked(entity.isAccountNonLocked());
+            user.setCredentialsNonExpired(entity.isCredentialsNonExpired());
+            user.setEnabled(entity.isEnabled());
+            return user;
+        });
     }
 
     public UserEntity userToUserEntity(User user) {
-        UserEntity userEntity = new UserEntity();
-
-
-        mapper.map(user, userEntity);
-        userEntity.setAuthorities(user.getAuthoritiesString());
-        userEntity.setAccountNonExpired(user.getAccountNonExpired());
-        userEntity.setAccountNonLocked(user.getAccountNonLocked());
-        userEntity.setCredentialsNonExpired(user.getCredentialsNonExpired());
-        userEntity.setEnabled(user.getEnabled());
-
-        return userEntity;
+        return convert(user, model -> {
+            UserEntity entity = new UserEntity();
+            entity.setUserId(model.getUserId());
+            entity.setEmail(model.getEmail());
+            entity.setPassword(model.getPassword());
+            entity.setFirstName(model.getFirstName());
+            entity.setLastName(model.getLastName());
+            entity.setDeliveryAddress(model.getDeliveryAddress());
+            entity.setPhoneNumber(model.getPhoneNumber());
+            entity.setAuthorities(model.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(",")));
+            entity.setAccountNonExpired(model.isAccountNonExpired());
+            entity.setAccountNonLocked(model.isAccountNonLocked());
+            entity.setCredentialsNonExpired(model.isCredentialsNonExpired());
+            entity.setEnabled(model.isEnabled());
+            return entity;
+        });
     }
 
     public Product productEntityToProduct(ProductEntity productEntity) {
-        return mapper.map(productEntity, Product.class);
+        return convert(productEntity, entity -> {
+            Product product = new Product();
+            product.setProductId(entity.getProductId());
+            product.setLabelEn(entity.getLabelEn());
+            product.setLabelFr(entity.getLabelFr());
+            product.setDescriptionEn(entity.getDescriptionEn());
+            product.setDescriptionFr(entity.getDescriptionFr());
+            product.setPrice(entity.getPrice());
+            product.setStock(entity.getStock());
+            product.setCategory(categoryEntityToCategory(entity.getCategory()));
+            return product;
+        });
     }
 
     public ProductEntity productToProductEntity(Product product) {
-        return mapper.map(product, ProductEntity.class);
-    }
-
-    private Category getCategoryByCategoryEntity(CategoryEntity categoryEntity) {
-        Category category = new Category();
-        category.setId(categoryEntity.getId());
-        category.setLabelEn(categoryEntity.getLabelEn());
-        category.setLabelFr(categoryEntity.getLabelFr());
-        return category;
-    }
-
-    public Promotion promotionEntityToPromotion(PromotionEntity promotionEntity) {
-        return mapper.map(promotionEntity, Promotion.class);
-    }
-
-    public OrderEntity orderToOrderEntity(Order order) {
-        return mapper.map(order, OrderEntity.class);
-    }
-
-    public OrderLineEntity orderLineToOrderLineEntity(OrderLine orderLine) {
-        OrderLineEntity orderLineEntity = new OrderLineEntity();
-        orderLineEntity.setQuantity(orderLine.getQuantity());
-        orderLineEntity.setPrice(orderLine.getPrice());
-        return orderLineEntity;
-    }
-
-    public Order orderEntityToOrder(OrderEntity orderEntity) {
-        return mapper.map(orderEntity, Order.class);
+        return convert(product, model -> {
+            ProductEntity entity = new ProductEntity();
+            entity.setProductId(model.getProductId());
+            entity.setLabelEn(model.getLabelEn());
+            entity.setLabelFr(model.getLabelFr());
+            entity.setDescriptionEn(model.getDescriptionEn());
+            entity.setDescriptionFr(model.getDescriptionFr());
+            entity.setPrice(model.getPrice());
+            entity.setStock(model.getStock());
+            entity.setCategory(categoryToCategoryEntity(model.getCategory()));
+            return entity;
+        });
     }
 
     public Category categoryEntityToCategory(CategoryEntity categoryEntity) {
-        return mapper.map(categoryEntity, Category.class);
+        return convert(categoryEntity, entity -> {
+            Category category = new Category();
+            category.setCategoryId(entity.getCategoryId());
+            category.setLabelEn(entity.getLabelEn());
+            category.setLabelFr(entity.getLabelFr());
+            return category;
+        });
     }
 
     public CategoryEntity categoryToCategoryEntity(Category category) {
-        return mapper.map(category, CategoryEntity.class);
-    }
-
-    public OrderLine orderLineEntityToOrderLine(OrderLineEntity orderLineEntity) {
-        return mapper.map(orderLineEntity, OrderLine.class);
+        return convert(category, model -> {
+            CategoryEntity entity = new CategoryEntity();
+            entity.setCategoryId(model.getCategoryId());
+            entity.setLabelEn(model.getLabelEn());
+            entity.setLabelFr(model.getLabelFr());
+            return entity;
+        });
     }
 }

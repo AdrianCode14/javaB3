@@ -7,27 +7,16 @@ import lombok.Setter;
 
 import java.util.Locale;
 
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Category {
-    private int id;
+    private Integer categoryId;
     private String labelEn;
     private String labelFr;
 
-    public String getName(Locale locale) {
-        if (locale.getLanguage().equals("fr")) {
-            return labelFr;
-        }
-        return labelEn;
-    }
-
-    public String getLink() {
-        return "category/" + labelEn;
-    }
-
-    public String getLocalizedLabel(Locale locale) {
-        return "fr".equalsIgnoreCase(locale.getLanguage()) ? labelFr : labelEn;
+    public String getName(Locale currentLocale) {
+        return currentLocale.getLanguage().equals("fr") ? labelFr : labelEn;
     }
 }

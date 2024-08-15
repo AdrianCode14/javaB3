@@ -1,150 +1,80 @@
-<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %> <%@
-include file="../include/importTags.jsp"%> <%@ taglib
-uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
-<html>
-  <head>
-    <spring:url var="localeFr" value="">
-      <spring:param name="locale" value="fr" />
-    </spring:url>
-    <spring:url var="localeEn" value="">
-      <spring:param name="locale" value="en" />
-    </spring:url>
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
+<%@ include file="../include/importTags.jsp"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-    <style>
-      /* Styles pour la barre de navigation */
-      header {
-        background-color: #f2f2f2;
-        padding: 10px 0;
-      }
-
-      .language-icons {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        display: flex;
-        gap: 10px;
-      }
-
-      .language-icons img {
-        width: 30px;
-        height: 30px;
-      }
-
-      nav {
-        text-align: center;
-      }
-
-      nav ul {
-        list-style-type: none;
-        margin: 0 auto; /* Pour centrer la liste horizontalement */
-        padding: 0;
-        display: inline-block;
-      }
-
-      nav ul li {
-        display: inline;
-        margin-right: 20px;
-      }
-
-      nav ul li:last-child {
-        margin-right: 0;
-      }
-
-      nav ul li a {
-        text-decoration: none;
-        color: #333;
-        font-weight: bold;
-        font-size: 16px;
-      }
-
-      /* Styles pour la liste des catégories */
-      .categories {
-        position: relative;
-        display: inline-block;
-      }
-
-      /* Styles pour la liste des catégories au survol */
-      .categories .category-list {
-        display: none;
-        position: absolute;
-        background-color: #fff;
-        min-width: 120px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        text-align: left;
-      }
-
-      .categories:hover .category-list {
-        display: block;
-      }
-
-      .categories .category-list a {
-        color: #333;
-        padding: 10px;
-        display: block;
-        text-decoration: none;
-      }
-    </style>
-    <link
-      type="text/css"
-      href="<spring:url value='/css/first.css' />"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Icônes pour changer la langue en haut à droite -->
-    <div class="language-icons">
-      <a href="${localeFr}">
-        <img alt="fr" src='<spring:url value="/images/fr.png" />' />
-      </a>
-      <a href="${localeEn}">
-        <img alt="en" src='<spring:url value="/images/engl.png"/>' />
-      </a>
-    </div>
-
-    <!-- Barre de navigation -->
-    <header>
-      <nav>
-        <ul>
-          <!-- Liens pour les fonctionnalités -->
-          <li>
-            <a href="/firstSpring/login"><fmt:message key="link.login" /></a>
-          </li>
-          <li>
-            <a href="/firstSpring/register"
-              ><fmt:message key="link.register"
-            /></a>
-          </li>
-          <li>
-            <a href="/firstSpring/accueil"><fmt:message key="link.home" /></a>
-          </li>
-          <li>
-            <a href="/firstSpring/society"
-              ><fmt:message key="link.society"
-            /></a>
-          </li>
-          <li class="categories">
-            <a href="#">Catégories</a>
-            <div class="category-list">
-              <a href="/firstSpring/accueil/">Horreur</a>
-              <a href="#">Science-fiction</a>
-              <a href="#">Policier</a>
-            </div>
-          </li>
-          <li><a href="/firstSpring/catalogue">Catalogue des Produits</a></li>
-          <li><a href="/caddie">Contenu du Caddie</a></li>
-          <!-- Ajoutez d'autres liens selon vos besoins -->
-        </ul>
-      </nav>
-    </header>
-
-    <!-- Contenu de la page spécifique -->
-    <main>
-      <div class="content">
-        <tiles:insertAttribute name="main-content" />
+<!DOCTYPE html>
+<html lang="${pageContext.response.locale}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><spring:message code="site.title" /></title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="<c:url value='/css/first.css' />" />
+</head>
+<body>
+<header class="bg-dark text-white py-3">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h1 class="mb-0">BookShop</h1>
       </div>
-    </main>
+      <div class="col-md-6 text-right">
+        <a href="?locale=fr" class="mr-2"><img src="<c:url value='/images/fr.png' />" alt="Français" width="30"></a>
+        <a href="?locale=en"><img src="<c:url value='/images/engl.png' />" alt="English" width="30"></a>
+      </div>
+    </div>
+  </div>
+</header>
 
-    <footer></footer>
-  </body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a class="nav-link" href="<spring:url value='/home'/>"><spring:message code="link.home" /></a></li>
+        <li class="nav-item"><a class="nav-link" href="<spring:url value='/society'/>"><spring:message code="link.society" /></a></li>
+        <li class="nav-item"><a class="nav-link" href="<spring:url value='/catalogue'/>"><spring:message code="link.catalog" /></a></li>
+        <li class="nav-item"><a class="nav-link" href="<spring:url value='/cart'/>"><spring:message code="link.cart" /></a></li>
+      </ul>
+      <ul class="navbar-nav">
+        <sec:authorize access="isAnonymous()">
+          <li class="nav-item"><a class="nav-link" href="<spring:url value='/login'/>"><spring:message code="link.login" /></a></li>
+          <li class="nav-item"><a class="nav-link" href="<spring:url value='/register'/>"><spring:message code="link.register" /></a></li>
+        </sec:authorize>
+        <sec:authorize access="isAuthenticated()">
+          <li class="nav-item">
+            <form action="<spring:url value='/logout'/>" method="post" class="form-inline">
+              <button type="submit" class="btn btn-link nav-link"><spring:message code="link.logout" /></button>
+            </form>
+          </li>
+        </sec:authorize>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <sec:authorize access="isAuthenticated()">
+    <div class="alert alert-info">
+      <spring:message code="welcome.message" arguments="${pageContext.request.userPrincipal.name}" />
+    </div>
+  </sec:authorize>
+
+  <main>
+    <tiles:insertAttribute name="main-content" />
+  </main>
+</div>
+<footer class="bg-dark text-white py-3 mt-4">
+  <div class="container text-center">
+    <p>&copy; 2023 BookShop. <spring:message code="footer.rights" /></p>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 </html>

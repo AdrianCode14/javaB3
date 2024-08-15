@@ -1,109 +1,64 @@
 package com.spring.henallux.ecommerce.Controller;
 
 import com.spring.henallux.ecommerce.Model.Cart;
-import com.spring.henallux.ecommerce.Model.CartLine;
 import com.spring.henallux.ecommerce.Model.Product;
-import com.spring.henallux.ecommerce.DataAccess.dao.ProductDataAccess;
-import com.spring.henallux.ecommerce.Service.Constants;
-import com.spring.henallux.ecommerce.Service.PromotionService;
+import com.spring.henallux.ecommerce.Service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Locale;
-
 @Controller
-@RequestMapping(value = "/cart")
-@SessionAttributes({Constants.CURRENT_CART})
+@SessionAttributes("cart")
+@RequestMapping("/cart")
 public class CartController {
 
-    private ProductDataAccess productDAO;
-    private PromotionService promotionService;
+    private final CartService cartService;
 
     @Autowired
-    public CartController(ProductDataAccess productDAO, PromotionService promotionService) {
-        this.productDAO = productDAO;
-        this.promotionService = promotionService;
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
     }
 
-    @ModelAttribute(Constants.CURRENT_CART)
+    @ModelAttribute("cart")
     public Cart cart() {
         return new Cart();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String cart(@ModelAttribute(value = Constants.CURRENT_CART) Cart cart, Locale locale, Model model) {
-        model.addAttribute("locale", locale);
-        model.addAttribute("cart", cart);
-        model.addAttribute("isEmpty", cart.getCartLines().isEmpty());
+    @GetMapping
+    public String viewCart(@ModelAttribute("cart") Cart cart, Model model) {
+        model.addAttribute("totalWithDiscount", cartService.calculateTotalWithDiscount(cart));
         return "integrated:cart";
     }
 
-    @RequestMapping(value = "/editQuantity", method = RequestMethod.POST)
-    public ResponseEntity<?> editQuantity(@ModelAttribute(value = Constants.CURRENT_CART) Cart cart, @RequestParam int productId, @RequestParam int quantity, Locale locale) {
-
-        Product product = productDAO.findById(productId);
-        HashMap<String, Object> response = new HashMap<>();
-        if (product == null) {
-            response.put("error", locale == Locale.FRENCH ? "Produit non trouvé" : "Product not found");
-            return ResponseEntity.ok(response);
-        }
-
-        if (quantity < 1) {
-            cart.removeProduct(productId);
-        } else {
-            if (product.getStock() < quantity) {
-                response.put("error", locale == Locale.FRENCH ? "Pas assez de stock" : "Not enough stock");
-                response.put("maxQuantity", product.getStock());
-                return ResponseEntity.ok(response);
-            }
-            cart.editQuantity(productId, quantity);
-        }
-        // return response with new total price and total price with shipping cost
-        response.put("success", true);
-        response.put("totalPrice", cart.getTotalPrice());
-        response.put("totalPriceWithShippingCost", cart.getTotalPriceWithShippingCost());
-
-        // return response
-        return ResponseEntity.ok(response);
+    @PostMapping("/add")
+    public String addToCart(@ModelAttribute("cart") Cart cart,
+                            @RequestParam("productId") int productId,
+                            @RequestParam("quantity") int quantity,
+                            @RequestParam("price") double price,
+                            @RequestParam("labelEn") String labelEn,
+                            @RequestParam("labelFr") String labelFr) {
+        Product product = new Product();
+        product.setId(productId);
+        product.setPrice(price);
+        product.setLabelEn(labelEn);
+        product.setLabelFr(labelFr);
+        cartService.addToCart(cart, product, quantity);
+        return "redirect:/cart";
     }
 
-    @RequestMapping(value = "/addProduct", method = RequestMethod.POST)
-    public ResponseEntity<?> addProduct(@RequestParam int productId, @RequestParam int quantity, Locale locale,
-                                        @ModelAttribute(value = Constants.CURRENT_CART) Cart cart) {
-        Product product = productDAO.findById(productId);
-
-        product = promotionService.applyPromotion(product);
-
-        HashMap<String, Object> response = new HashMap<>();
-
-        if (product == null) {
-            response.put("error", locale == Locale.FRENCH ? "Produit non trouvé" : "Product not found");
-            return ResponseEntity.ok(response);
-        }
-
-        int quantityTotal = quantity;
-        // check if user alradey has this product in his cart and add quantity to it
-        if (cart.getCartLines().containsKey(productId)) {
-            quantityTotal += cart.getCartLines().get(productId).getQuantity();
-
-        }
-
-        if (product.getStock() < quantityTotal) {
-            response.put("error", locale == Locale.FRENCH ? "Pas assez de stock" : "Not enough stock");
-        } else {
-            CartLine cartLine = new CartLine();
-            cartLine.setProduct(product);
-            cartLine.setQuantity(quantity);
-            cart.addProduct(cartLine);
-            response.put("success", locale == Locale.FRENCH ? "Produit ajouté au panier" : "Product added to cart");
-        }
-
-
-        return ResponseEntity.ok(response);
+    @PostMapping("/remove")
+    public String removeFromCart(@ModelAttribute("cart") Cart cart,
+                                 @RequestParam("productId") int productId) {
+        cartService.removeFromCart(cart, productId);
+        return "redirect:/cart";
     }
 
+    @PostMapping("/update")
+    public String updateQuantity(@ModelAttribute("cart") Cart cart,
+                                 @RequestParam("productId") int productId,
+                                 @RequestParam("quantity") int quantity) {
+        cartService.updateQuantity(cart, productId, quantity);
+        return "redirect:/cart";
+    }
 }

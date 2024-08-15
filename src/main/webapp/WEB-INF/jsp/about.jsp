@@ -1,18 +1,28 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: grosu
-  Date: 29/01/2024
-  Time: 12:24
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="/WEB-INF/jsp/include/importTags.jsp" />
-<html>
-<head>
-    <title>About Us</title>
-</head>
-<body>
-<h1>About Us</h1>
-<p>Welcome to our company's about page!</p>
-</body>
-</html>
+<%@ include file="include/importTags.jsp"%>
+
+<div class="container">
+    <h1><spring:message code="page.description.title" /></h1>
+
+    <div class="description-content">
+        <h2><spring:message code="page.description.welcome" /></h2>
+        <p><spring:message code="page.description.intro" /></p>
+
+        <h3><spring:message code="page.description.services" /></h3>
+        <ul>
+            <li><spring:message code="page.description.service1" /></li>
+            <li><spring:message code="page.description.service2" /></li>
+            <li><spring:message code="page.description.service3" /></li>
+            <li><spring:message code="page.description.service4" /></li>
+            <li><spring:message code="page.description.service5" /></li>
+        </ul>
+
+        <h3><spring:message code="page.description.location" /></h3>
+        <p><spring:message code="page.description.location.info" /></p>
+
+        <h3><spring:message code="page.description.contact" /></h3>
+        <p><spring:message code="page.description.contact.address" /></p>
+        <p><spring:message code="page.description.contact.phone" /></p>
+        <p><spring:message code="page.description.contact.email" /></p>
+    </div>
+</div>

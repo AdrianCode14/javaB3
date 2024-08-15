@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, String> {
-    ProductEntity findByLabelEnAndId(String labelEn, int id);
+public interface ProductRepository extends JpaRepository<ProductEntity, Integer> {
     ProductEntity findById(int id);
-    ArrayList<ProductEntity> findAllByCategoryId(CategoryEntity category);
+    ProductEntity findByLabelEnAndProductId(String labelEn, int productId);
+    ArrayList<ProductEntity> findAllByCategory(CategoryEntity categoryEntity);
     ArrayList<ProductEntity> findAll();
 }

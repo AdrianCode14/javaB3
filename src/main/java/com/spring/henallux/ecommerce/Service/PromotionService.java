@@ -1,5 +1,5 @@
 package com.spring.henallux.ecommerce.Service;
-
+/*
 import com.spring.henallux.ecommerce.Model.Product;
 import com.spring.henallux.ecommerce.DataAccess.dao.ProductDataAccess;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,3 +43,4 @@ public class PromotionService {
 
 
 }
+*/

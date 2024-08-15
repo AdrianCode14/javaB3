@@ -6,9 +6,8 @@ import com.spring.henallux.ecommerce.Model.Product;
 import java.util.ArrayList;
 
 public interface ProductDataAccess {
-    Product findByLabelEnAndId(String labelEn, int id);
     Product findById(int id);
+    Product findByLabelEnAndId(String labelEn, int id);
     ArrayList<Product> findByCategory(Category category);
     ArrayList<Product> findAll();
-    Product save(Product product);
 }

@@ -26,6 +26,9 @@
     <definition name="error" extends="template-main">
         <put-attribute name="main-content" value="/WEB-INF/jsp/error.jsp" />
     </definition>
+    <definition name="integrated:catalogue" extends="template-main">
+        <put-attribute name="main-content" value="/WEB-INF/jsp/catalogue.jsp" />
+    </definition>
 
 
 </tiles-definitions>

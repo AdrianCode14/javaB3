@@ -8,6 +8,7 @@ import org.springframework.validation.DefaultMessageCodesResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
@@ -21,15 +22,14 @@ public class MainConfiguration implements WebMvcConfigurer {
 
     @Bean
     public DefaultMessageCodesResolver defaultMessageCodesResolver() {
-        DefaultMessageCodesResolver defaultMessageCodesResolver = new DefaultMessageCodesResolver();
-        return defaultMessageCodesResolver;
+        return new DefaultMessageCodesResolver();
     }
 
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setBasenames("translations/general");
+        messageSource.setBasenames("translations/general", "translations/errors");
         messageSource.setUseCodeAsDefaultMessage(true);
         return messageSource;
     }
@@ -46,7 +46,16 @@ public class MainConfiguration implements WebMvcConfigurer {
         CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(new Locale("fr"));
         resolver.setCookieName("localeCookie");
-        resolver.setCookieMaxAge(-1);
+        resolver.setCookieMaxAge(-1); // Cookie persists until browser shutdown
         return resolver;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("/css/");
+
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("/images/");
     }
 }

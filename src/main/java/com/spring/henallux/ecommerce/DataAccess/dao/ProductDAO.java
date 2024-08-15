@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductDAO implements ProductDataAccess {
@@ -23,70 +24,33 @@ public class ProductDAO implements ProductDataAccess {
         this.providerConverter = providerConverter;
     }
 
-    public Product findByLabelEnAndId(String labelEn, int id) {
-        ProductEntity productEntity = productRepository.findByLabelEnAndId(labelEn, id);
-
-        if (productEntity == null) {
-            return null;
-        }
-
-        Product product = providerConverter.productEntityToProduct(productEntity);
-        if (productEntity.getPromotionId() != null)
-            product.setPromotion(providerConverter.promotionEntityToPromotion(productEntity.getPromotionId()));
-
-        return product;
-    }
-
+    @Override
     public Product findById(int id) {
         ProductEntity productEntity = productRepository.findById(id);
-
-        if (productEntity == null) {
-            return null;
-        }
-
-        Product product = providerConverter.productEntityToProduct(productEntity);
-        if (productEntity.getPromotionId() != null)
-            product.setPromotion(providerConverter.promotionEntityToPromotion(productEntity.getPromotionId()));
-
-        return product;
+        return productEntity != null ? providerConverter.productEntityToProduct(productEntity) : null;
     }
 
+    @Override
+    public Product findByLabelEnAndId(String labelEn, int id) {
+        ProductEntity productEntity = productRepository.findByLabelEnAndProductId(labelEn, id);
+        return productEntity != null ? providerConverter.productEntityToProduct(productEntity) : null;
+    }
+
+    @Override
     public ArrayList<Product> findByCategory(Category category) {
         CategoryEntity categoryEntity = providerConverter.categoryToCategoryEntity(category);
-        ArrayList<ProductEntity> productEntity = productRepository.findAllByCategoryId(categoryEntity);
-
-        ArrayList<Product> products = new ArrayList<>();
-
-        for (ProductEntity product : productEntity) {
-            Product productToAdd = providerConverter.productEntityToProduct(product);
-            if (product.getPromotionId() != null)
-                productToAdd.setPromotion(providerConverter.promotionEntityToPromotion(product.getPromotionId()));
-            products.add(productToAdd);
-
-
-        }
-
-        return products;
+        ArrayList<ProductEntity> productEntities = productRepository.findAllByCategory(categoryEntity);
+        return productEntities.stream()
+                .map(providerConverter::productEntityToProduct)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
+
+    @Override
     public ArrayList<Product> findAll() {
-        ArrayList<ProductEntity> productEntity = productRepository.findAll();
-
-        ArrayList<Product> products = new ArrayList<>();
-
-        for (ProductEntity product : productEntity) {
-            Product productToAdd = providerConverter.productEntityToProduct(product);
-            if (product.getPromotionId() != null)
-                productToAdd.setPromotion(providerConverter.promotionEntityToPromotion(product.getPromotionId()));
-            products.add(productToAdd);
-        }
-
-        return products;
-    }
-
-    public Product save(Product product) {
-        ProductEntity productEntity = providerConverter.productToProductEntity(product);
-        productEntity = productRepository.save(productEntity);
-        return providerConverter.productEntityToProduct(productEntity);
+        ArrayList<ProductEntity> productEntities = productRepository.findAll();
+        return productEntities.stream()
+                .map(providerConverter::productEntityToProduct)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

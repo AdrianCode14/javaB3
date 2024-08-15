@@ -1,5 +1,6 @@
 package com.spring.henallux.ecommerce.Model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,14 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderLine {
-    private int id;
-    private int quantity;
-    private double price;
-    private Product product;
+    private Integer lineId;
+    private Double unitPrice;
+    private Integer quantity;
     private Order order;
-
-    public double getTotalPrice() {
-        return Math.round((quantity * price) * 100.0) / 100.0;
-    }
+    private Product product;
 }

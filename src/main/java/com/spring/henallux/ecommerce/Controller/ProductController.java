@@ -3,7 +3,6 @@ package com.spring.henallux.ecommerce.Controller;
 import com.spring.henallux.ecommerce.Model.CartLine;
 import com.spring.henallux.ecommerce.Model.Product;
 import com.spring.henallux.ecommerce.DataAccess.dao.ProductDataAccess;
-import com.spring.henallux.ecommerce.Service.PromotionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,26 +15,24 @@ import java.util.Locale;
 public class ProductController {
 
     private ProductDataAccess productDAO;
-    private PromotionService promotionService;
 
     @Autowired
-    public ProductController(ProductDataAccess productDAO, PromotionService promotionService) {
+    public ProductController(ProductDataAccess productDAO) {
         this.productDAO = productDAO;
-        this.promotionService = promotionService;
     }
 
     @GetMapping("/product/{productName}-{productId}")
     public String product(@PathVariable String productName, @PathVariable Integer productId, Model model, Locale locale) {
         Product product = productDAO.findByLabelEnAndId(productName, productId);
 
-        product = promotionService.applyPromotion(product);
+        if (product == null)
+            return "redirect:/error";
 
-        ArrayList<Product> similarProducts = productDAO.findByCategory(product.getCategoryId());
+        ArrayList<Product> similarProducts = productDAO.findByCategory(product.getCategory());
 
         // Remove the current product from the list
-        int finalProductId = product.getId();
-        similarProducts.removeIf(p -> p.getId() == finalProductId);
-
+        int finalProductId = product.getProductId();
+        similarProducts.removeIf(p -> p.getProductId() == finalProductId);
 
         model.addAttribute("similarProducts", similarProducts);
         model.addAttribute("product", product);
@@ -43,9 +40,6 @@ public class ProductController {
         CartLine cartLine = new CartLine();
         cartLine.setQuantity(1);
         model.addAttribute("cartLine", cartLine);
-
-        if (product == null)
-            return "redirect:/error";
 
         return "integrated:product";
     }

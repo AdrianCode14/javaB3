@@ -1,25 +1,6 @@
 package com.spring.henallux.ecommerce.Controller;
 
-import com.spring.henallux.ecommerce.DataAccess.dao.ProductDataAccess;
-import com.spring.henallux.ecommerce.Model.*;
-import com.spring.henallux.ecommerce.DataAccess.dao.OrderDataAccess;
-import com.spring.henallux.ecommerce.DataAccess.dao.OrderLineDataAccess;
-import com.spring.henallux.ecommerce.DataAccess.dao.UserDataAccess;
-import com.spring.henallux.ecommerce.DataAccess.entity.OrderEntity;
-import com.spring.henallux.ecommerce.Service.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
+/*
 @Controller
 @RequestMapping(value = "/order")
 @SessionAttributes({Constants.CURRENT_ORDER, Constants.CURRENT_CART})
@@ -123,3 +104,4 @@ public class OrderController {
     }
 
 }
+*/

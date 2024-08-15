@@ -1,24 +1,27 @@
-<%@ include file="include/importTags.jsp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/jsp/include/importTags.jsp" />
-<!DOCTYPE html>
-<html>
-<head>
-    <title><fmt:message key="page.home.title" /></title>
-</head>
-<body>
-<h1><fmt:message key="page.home.welcome" /></h1>
+<%@ include file="include/importTags.jsp"%>
 
-<p><fmt:message key="page.home.monthly.books" /></p>
-<ul>
-    <p>Le meilleur site de vente en ligne </p>
+<div class="container">
+    <h1><spring:message code="page.home.title" /></h1>
 
-</ul>
-<p><fmt:message key="page.home.start.catalog" /><a><fmt:message key="page.home.catalog.link" /></a>.</p>
+    <div class="welcome-message">
+        <h2><spring:message code="page.home.welcome" /></h2>
+        <p><spring:message code="page.home.monthly.books" /></p>
+        <ul>
+            <li><spring:message code="page.home.book1.title" /></li>
+            <li><spring:message code="page.home.book2.title" /></li>
+            <li><spring:message code="page.home.book3.title" /></li>
+        </ul>
+    </div>
 
-<footer>
-    <!-- Ajoutez ici le contenu du pied de page -->
-    <p><fmt:message key="page.home.contact" /></p>
-</footer>
-</body>
-</html>
+    <div class="catalog-link">
+        <p>
+            <spring:message code="page.home.start.catalog" />
+            <a href="<spring:url value='/catalogue'/>"><spring:message code="page.home.catalog.link" /></a>.
+        </p>
+    </div>
+
+    <div class="contact-info">
+        <p><spring:message code="page.home.contact" /></p>
+    </div>
+</div>

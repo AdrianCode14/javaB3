@@ -20,50 +20,16 @@ public class UserDAO implements UserDataAccess {
         this.providerConverter = providerConverter;
     }
 
+    @Override
     public User findByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
-
-        if (userEntity == null) {
-            return null;
-        }
-
-        return providerConverter.userEntityToUser(userEntity);
+        return userEntity != null ? providerConverter.userEntityToUser(userEntity) : null;
     }
+
+    @Override
     public User save(User user) {
-        System.out.println("OUIIIIIIII");
         UserEntity userEntity = providerConverter.userToUserEntity(user);
-
         userEntity = userRepository.save(userEntity);
-
         return providerConverter.userEntityToUser(userEntity);
     }
-
-    public User update(UserEdit user, User oldUser) {
-        if (user.getEmail() != null) {
-            oldUser.setEmail(oldUser.getEmail());
-        }
-
-        if (user.getFirstName() != null) {
-            oldUser.setFirstName(user.getFirstName());
-        }
-
-        if (user.getLastName() != null) {
-            oldUser.setLastName(user.getLastName());
-        }
-
-        if (user.getDeliveryAddress() != null) {
-            oldUser.setDeliveryAddress(user.getDeliveryAddress());
-        }
-
-        if (user.getPhoneNumber() != null) {
-            oldUser.setPhoneNumber(user.getPhoneNumber());
-        }
-
-        UserEntity userEntity = providerConverter.userToUserEntity(oldUser);
-
-        userEntity = userRepository.save(userEntity);
-
-        return providerConverter.userEntityToUser(userEntity);
-    }
-
 }

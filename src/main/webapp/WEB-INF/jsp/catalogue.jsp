@@ -1,31 +1,21 @@
-<%@ include file="include/importTags.jsp"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/jsp/include/importTags.jsp" />
-<!DOCTYPE html>
-<html>
-<head>
-</head>
+<%@ include file="include/importTags.jsp"%>
 
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Price</th>
-    </tr>
+<div class="container">
+    <h1><spring:message code="link.catalog" /></h1>
 
-    <c:forEach var="product" items="${products}">
-        <tr>
-            <td>${product.labelEn}</td>
-            <td>${product.descriptionEn}</td>
-            <td>${product.price}</td>
-        </tr>
-        <tr>
-            <td colspan="3">&nbsp;</td>
-        </tr>
-    </c:forEach>
-</table>
-<footer>
-    <p><fmt:message key="page.home.contact" /></p>
-</footer>
-</body>
-</html>
+    <div class="product-list">
+        <c:forEach var="product" items="${products}">
+            <div class="product-item">
+                <h2>${product.localizedLabel(pageContext.response.locale.language)}</h2>
+                <p>${product.localizedDescription(pageContext.response.locale.language)}</p>
+                <p class="price"><spring:message code="cart.price" />: ${product.price}</p>
+                <form action="<spring:url value='/cart/add'/>" method="post">
+                    <input type="hidden" name="productId" value="${product.productId}" />
+                    <input type="number" name="quantity" value="1" min="1" />
+                    <button type="submit"><spring:message code="cart.placeOrder" /></button>
+                </form>
+            </div>
+        </c:forEach>
+    </div>
+</div>

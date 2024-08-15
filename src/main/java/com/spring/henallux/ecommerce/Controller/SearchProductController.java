@@ -1,5 +1,5 @@
 package com.spring.henallux.ecommerce.Controller;
-
+/*
 import com.spring.henallux.ecommerce.Model.Category;
 import com.spring.henallux.ecommerce.Model.Product;
 import com.spring.henallux.ecommerce.DataAccess.dao.CategoryDataAccess;
@@ -150,3 +150,4 @@ public class SearchProductController {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 }
+*/
