@@ -2,7 +2,7 @@
 <%@ include file="../include/importTags.jsp"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html lang="${pageContext.response.locale}">
 <head>
@@ -36,7 +36,9 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item"><a class="nav-link" href="<spring:url value='/home'/>"><spring:message code="link.home" /></a></li>
         <li class="nav-item"><a class="nav-link" href="<spring:url value='/society'/>"><spring:message code="link.society" /></a></li>
-        <li class="nav-item"><a class="nav-link" href="<spring:url value='/catalogue'/>"><spring:message code="link.catalog" /></a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="<spring:url value='/catalogue'/>"><spring:message code="link.catalog" /></a>
+        </li>
         <li class="nav-item"><a class="nav-link" href="<spring:url value='/cart'/>"><spring:message code="link.cart" /></a></li>
       </ul>
       <ul class="navbar-nav">

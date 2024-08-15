@@ -21,3 +21,7 @@ paypal:
   baseUrl: https://api-m.sandbox.paypal.com
   clientId: AfU8BZvjjUfdv1YamBcsaBux8--rf9HUnG2aAw2GbdNGdAC0fWIG1tg2RrPWo2BHY7W3GlqB6GG0TuO-
   secret: EB7xD_t0v4ag5FTt4Vn6HK0iW1kiXInKvFSAScdV57nLNgfK7_IsFjr5R9RaTjqtQIpZxLj0IB72I9HL
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.apache.tiles: DEBUG

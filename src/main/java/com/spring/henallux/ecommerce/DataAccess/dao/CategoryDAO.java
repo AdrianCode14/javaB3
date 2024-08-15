@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CategoryDAO implements CategoryDataAccess {
@@ -23,7 +24,7 @@ public class CategoryDAO implements CategoryDataAccess {
 
     @Override
     public ArrayList<Category> getAllCategories() {
-        ArrayList<CategoryEntity> categoryEntities = categoryRepository.findAll();
+        List<CategoryEntity> categoryEntities = categoryRepository.findAll();
 
         ArrayList<Category> categories = new ArrayList<>();
 
