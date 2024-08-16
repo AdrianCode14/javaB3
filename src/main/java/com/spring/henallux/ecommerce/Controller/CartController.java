@@ -3,62 +3,63 @@ package com.spring.henallux.ecommerce.Controller;
 import com.spring.henallux.ecommerce.Model.Cart;
 import com.spring.henallux.ecommerce.Model.Product;
 import com.spring.henallux.ecommerce.Service.CartService;
+import com.spring.henallux.ecommerce.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
-@SessionAttributes("cart")
 @RequestMapping("/cart")
+@SessionAttributes("cart")  // Ajoutez cette annotation
 public class CartController {
 
-    private final CartService cartService;
+    @Autowired
+    private CartService cartService;
 
     @Autowired
-    public CartController(CartService cartService) {
-        this.cartService = cartService;
-    }
+    private ProductService productService; // Ajoutez ce service pour obtenir les produits
 
-    @ModelAttribute("cart")
-    public Cart cart() {
-        return new Cart();
+    @ModelAttribute("cart")  // Ajoutez cette méthode
+    public Cart cart(HttpSession session) {
+        return cartService.getCart(session);
     }
 
     @GetMapping
-    public String viewCart(@ModelAttribute("cart") Cart cart, Model model) {
-        model.addAttribute("totalWithDiscount", cartService.calculateTotalWithDiscount(cart));
-        return "integrated:cart";
+    public String viewCart(HttpSession session, Model model) {
+        Cart cart = cartService.getCart(session); // Obtenez le panier depuis la session
+        double totalWithDiscount = cartService.calculateTotalWithDiscount(cart);
+        model.addAttribute("cart", cart);
+        model.addAttribute("totalWithDiscount", totalWithDiscount);
+        return "integrated:cartView"; // Nom de la vue JSP
     }
 
     @PostMapping("/add")
-    public String addToCart(@ModelAttribute("cart") Cart cart,
-                            @RequestParam("productId") int productId,
+    public String addToCart(@RequestParam("productId") int productId,
                             @RequestParam("quantity") int quantity,
-                            @RequestParam("price") double price,
-                            @RequestParam("labelEn") String labelEn,
-                            @RequestParam("labelFr") String labelFr) {
-        Product product = new Product();
-        product.setId(productId);
-        product.setPrice(price);
-        product.setLabelEn(labelEn);
-        product.setLabelFr(labelFr);
+                            HttpSession session) {
+        Cart cart = cartService.getCart(session); // Obtenez le panier depuis la session
+        Product product = productService.findProductById(productId); // Obtenez le produit par ID
         cartService.addToCart(cart, product, quantity);
-        return "redirect:/cart";
+        return "redirect:/cart"; // Redirige vers la vue du panier
     }
 
     @PostMapping("/remove")
-    public String removeFromCart(@ModelAttribute("cart") Cart cart,
-                                 @RequestParam("productId") int productId) {
+    public String removeFromCart(@RequestParam("productId") int productId,
+                                 HttpSession session) {
+        Cart cart = cartService.getCart(session); // Obtenez le panier depuis la session
         cartService.removeFromCart(cart, productId);
-        return "redirect:/cart";
+        return "redirect:/cart"; // Redirige vers la vue du panier
     }
 
     @PostMapping("/update")
-    public String updateQuantity(@ModelAttribute("cart") Cart cart,
-                                 @RequestParam("productId") int productId,
-                                 @RequestParam("quantity") int quantity) {
+    public String updateQuantity(@RequestParam("productId") int productId,
+                                 @RequestParam("quantity") int quantity,
+                                 HttpSession session) {
+        Cart cart = cartService.getCart(session); // Obtenez le panier depuis la session
         cartService.updateQuantity(cart, productId, quantity);
-        return "redirect:/cart";
+        return "redirect:/cart"; // Redirige vers la vue du panier
     }
 }

@@ -27,7 +27,7 @@ public class Product {
         return "fr".equalsIgnoreCase(language) ? descriptionFr : descriptionEn;
     }
 
-    public void setId(int productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 }
