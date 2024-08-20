@@ -1,74 +1,67 @@
 package com.spring.henallux.ecommerce.Service;
-/*
-import com.spring.henallux.ecommerce.Model.Order;
-import com.spring.henallux.ecommerce.Configuration.PayPalConfig;
+
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PaypalService {
-    private final PayPalConfig payPalConfig;
 
     @Autowired
-    public PaypalService(PayPalConfig payPalConfig) {
-        this.payPalConfig = payPalConfig;
-    }
+    private APIContext apiContext;
 
-    public ResponseEntity<String> createPayment(Order order) {
-        String apiUrl = "/v2/checkout/orders";
+    public Payment createPayment(
+            Double total,
+            String currency,
+            String method,
+            String intent,
+            String description,
+            String cancelUrl,
+            String successUrl) throws PayPalRESTException {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String accessToken = payPalConfig.getAccessToken();
-        headers.setBearerAuth(accessToken);
+        Amount amount = new Amount();
+        amount.setCurrency(currency);
 
-        // Construire le corps de la requête pour créer un paiement avec les articles de la commande
-        String requestBody = buildRequestBody(order);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        DecimalFormat decimalFormat = new DecimalFormat("#.00", symbols);
+        String formattedTotal = decimalFormat.format(total);
+        System.out.println("Formatted Total: " + formattedTotal);
+        amount.setTotal(formattedTotal);
 
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+        Transaction transaction = new Transaction();
+        transaction.setDescription(description);
+        transaction.setAmount(amount);
 
-        return payPalConfig.makePayPalApiCall(apiUrl, HttpMethod.POST, headers, entity);
-    }
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(transaction);
 
-    public ResponseEntity<String> capturePayment(String orderId) {
-        String apiUrl = "/v2/checkout/orders/" + orderId + "/capture";
+        Payer payer = new Payer();
+        payer.setPaymentMethod(method.toLowerCase());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String accessToken = payPalConfig.getAccessToken();
-        headers.setBearerAuth(accessToken);
+        RedirectUrls redirectUrls = new RedirectUrls();
+        redirectUrls.setCancelUrl(cancelUrl);
+        redirectUrls.setReturnUrl(successUrl);
 
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+        Payment payment = new Payment();
+        payment.setIntent(intent.toLowerCase());
+        payment.setPayer(payer);
+        payment.setTransactions(transactions);
+        payment.setRedirectUrls(redirectUrls);
 
-        return payPalConfig.makePayPalApiCall(apiUrl, HttpMethod.POST, headers, entity);
-    }
+        System.out.println("Payment details: " + payment.toString());
 
-    private String buildRequestBody(Order order) {
-        StringBuilder json = new StringBuilder(
-                        "{"
-                        + "\"intent\": \"CAPTURE\","
-                        + "\"purchase_units\": ["
-                        + "{"
-                        + "\"amount\": {"
-                        + "\"currency_code\": \"EUR\","
-                        + "\"value\": " + order.getTotalPriceWithShippingCost()
-                        + "}"
-                        + "}"
-                        + "],"
-                        + "\"payment_source\": {"
-                        + "\"paypal\": {"
-                        + "\"experience_context\": {"
-                        + "\"payment_method_preference\": \"IMMEDIATE_PAYMENT_REQUIRED\","
-                        + "\"brand_name\": \"Furniture paradise\","
-                        + "\"landing_page\": \"LOGIN\","
-                        + "\"user_action\": \"PAY_NOW\""
-                        + "}"
-                        + "}"
-                        + "}"
-                        + "}");
+        Payment createdPayment = payment.create(apiContext);
 
-        return json.toString();
+        System.out.println("Created Payment details: " + createdPayment.toString());
+
+        return createdPayment;
     }
 }
-*/

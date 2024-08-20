@@ -6,6 +6,10 @@ server:
       charset: UTF-8
       enabled: true
 spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
   datasource:
     password: admin
     url: jdbc:mysql://localhost:3306/bookshopbd2?user=root
@@ -18,10 +22,7 @@ spring:
     mandatory-file-encoding: UTF-8
 
 paypal:
-  baseUrl: https://api-m.sandbox.paypal.com
-  clientId: AfU8BZvjjUfdv1YamBcsaBux8--rf9HUnG2aAw2GbdNGdAC0fWIG1tg2RrPWo2BHY7W3GlqB6GG0TuO-
-  secret: EB7xD_t0v4ag5FTt4Vn6HK0iW1kiXInKvFSAScdV57nLNgfK7_IsFjr5R9RaTjqtQIpZxLj0IB72I9HL
-logging:
-  level:
-    org.springframework.web: DEBUG
-    org.apache.tiles: DEBUG
+  client:
+    id: ARNBABUvqAgPzdpB5net7G9_1-CpUlOvDeLPf59KEYmhV7mhxaE11fVtF8YxeJr2jMd8pKdub6s99pZg
+    secret: EPJXYuTvDNPAfMoZwH80lbQTZrV6e9CaqdQMZzgoh9_egVlJJ7PVh9FnjcZt6ANOGzJj3XUWM4Rbc0gp
+  mode: sandbox

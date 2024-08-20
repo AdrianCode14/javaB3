@@ -20,7 +20,7 @@
             </tr>
             </thead>
             <tbody>
-           <c:forEach var="entry" items="${cart.items}">
+            <c:forEach var="entry" items="${cart.items}">
                 <tr>
                     <td>${entry.value.product.getLocalizedLabel(pageContext.response.locale.language)}</td>
                     <td>${entry.value.product.price}</td>
@@ -49,7 +49,10 @@
             </tfoot>
         </table>
 
-        <a href="<c:url value='/checkout'/>" class="btn btn-primary"><spring:message code="cart.checkout" /></a>
+        <!-- Formulaire pour initier le paiement -->
+        <form action="<c:url value='/pay'/>" method="post">
+            <button type="submit" class="btn btn-primary"><spring:message code="cart.checkout" /></button>
+        </form>
     </c:if>
 
     <a href="<c:url value='/catalogue'/>" class="btn btn-secondary"><spring:message code="cart.continueShopping" /></a>
