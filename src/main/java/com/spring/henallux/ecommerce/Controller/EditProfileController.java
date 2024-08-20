@@ -1,159 +1,96 @@
 package com.spring.henallux.ecommerce.Controller;
-/*
-import com.spring.henallux.ecommerce.Model.Order;
-import com.spring.henallux.ecommerce.Model.PasswordChangeForm;
+
 import com.spring.henallux.ecommerce.Model.User;
-import com.spring.henallux.ecommerce.Model.UserEdit;
-import com.spring.henallux.ecommerce.DataAccess.dao.OrderDataAccess;
-import com.spring.henallux.ecommerce.DataAccess.dao.OrderLineDataAccess;
-import com.spring.henallux.ecommerce.DataAccess.dao.UserDataAccess;
+import com.spring.henallux.ecommerce.Model.UserEditDto;
+import com.spring.henallux.ecommerce.Model.PasswordChangeForm;
+import com.spring.henallux.ecommerce.Service.UserService;
+//import com.spring.henallux.ecommerce.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
 
 @Controller
-@RequestMapping(value = "/editProfile")
+@RequestMapping(value = "/profile")
 public class EditProfileController {
 
-    private UserDataAccess userDAO;
-    private OrderDataAccess orderDAO;
-    private OrderLineDataAccess orderLineDAO;
+    private final UserService userService;
+    //private final OrderService orderService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public EditProfileController(UserDataAccess userDAO, OrderDataAccess orderDAO, OrderLineDataAccess orderLineDA) {
-        this.userDAO = userDAO;
-        this.orderDAO = orderDAO;
-        this.orderLineDAO = orderLineDA;
+    public EditProfileController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        //this.orderService = orderService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping("/edit")
     public String editProfile(Model model, Authentication authentication) {
-        User oldUser = (User) authentication.getPrincipal();
+        User currentUser = (User) authentication.getPrincipal();
+        UserEditDto userEditDto = userService.convertToUserEditDto(currentUser);
 
-        UserEdit user = new UserEdit();
-
-        user.setEmail(oldUser.getEmail());
-        user.setFirstName(oldUser.getFirstName());
-        user.setLastName(oldUser.getLastName());
-        user.setDeliveryAddress(oldUser.getDeliveryAddress());
-        user.setPhoneNumber(oldUser.getPhoneNumber());
-
-        model.addAttribute("user", user);
-
-
-        User userInDb = userDAO.findByEmail(oldUser.getEmail());
-
-        HashMap<Integer, Order> orders = orderDAO.findAllByUserId(userInDb);
-
-        for (Order order : orders.values()) {
-            order.setOrderLines(orderLineDAO.findAllByOrderId(order));
-        }
-
-        orders = sortByDate(orders);
-
-        model.addAttribute("orders", orders);
-        model.addAttribute("passwordchangeform", new PasswordChangeForm());
+        model.addAttribute("user", userEditDto);
+        model.addAttribute("passwordChangeForm", new PasswordChangeForm());
+        //model.addAttribute("orders", orderService.findAllByUser(currentUser));
 
         return "integrated:editProfile";
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.POST)
-    public String editProfileSubmit(Model model, @Valid @ModelAttribute(value = "user") UserEdit user, Authentication authentication, final BindingResult errors) {
-        User oldUser = (User) authentication.getPrincipal();
-        model.addAttribute("user", user);
-        model.addAttribute("passwordchangeform", new PasswordChangeForm());
-        //check
-        if (errors.hasErrors()) {
-            model.addAttribute("user", user);
+    @PostMapping("/edit")
+    public String editProfileSubmit(@Valid @ModelAttribute("user") UserEditDto userEditDto,
+                                    BindingResult bindingResult,
+                                    Authentication authentication,
+                                    Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("passwordChangeForm", new PasswordChangeForm());
             return "integrated:editProfile";
         }
 
+        User currentUser = (User) authentication.getPrincipal();
 
-        //check email already exist
-        if (!oldUser.getEmail().equals(user.getEmail()) && userDAO.findByEmail(user.getEmail()) != null) {
-            model.addAttribute("user", user);
-            model.addAttribute("error", "Email already exist");
+        if (!currentUser.getEmail().equals(userEditDto.getEmail()) && userService.findByEmail(userEditDto.getEmail()) != null) {
+            model.addAttribute("error", "Email already exists");
+            model.addAttribute("passwordChangeForm", new PasswordChangeForm());
             return "integrated:editProfile";
         }
 
-        //save to db
-        oldUser = userDAO.update(user, oldUser);
+        userService.updateUserProfile(currentUser, userEditDto);
 
-        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(oldUser, authentication.getCredentials(), oldUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-
-        return "integrated:home";
+        return "redirect:/profile/edit";
     }
 
+    @PostMapping("/change-password")
+    public String changePassword(@Valid @ModelAttribute("passwordChangeForm") PasswordChangeForm passwordChangeForm,
+                                 BindingResult bindingResult,
+                                 Authentication authentication,
+                                 Model model) {
+        User currentUser = (User) authentication.getPrincipal();
 
-    @RequestMapping(value = "/password", method = RequestMethod.POST)
-    public String editPasswordSubmit(Model model, @Valid @ModelAttribute(value = "user") UserEdit user, @Valid @ModelAttribute(value = "passwordchangeform") PasswordChangeForm passwordChangeForm, Authentication authentication, final BindingResult errors) {
-        User oldUser = (User) authentication.getPrincipal();
-        model.addAttribute("passwordchangeform", passwordChangeForm);
-        model.addAttribute("user", oldUser);
-        System.out.println(passwordChangeForm.getOldPassword());
-        //check
-        if (errors.hasErrors()) {
-            model.addAttribute("passwordchangeform", new PasswordChangeForm());
-
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("user", userService.convertToUserEditDto(currentUser));
             return "integrated:editProfile";
         }
 
-        //check old password
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (!passwordEncoder.matches(passwordChangeForm.getOldPassword(), oldUser.getPassword())) {
-            model.addAttribute("passwordchangeform", new PasswordChangeForm());
-            model.addAttribute("error", "Old password is incorrect");
+        if (!passwordEncoder.matches(passwordChangeForm.getOldPassword(), currentUser.getPassword())) {
+            model.addAttribute("passwordError", "Old password is incorrect");
+            model.addAttribute("user", userService.convertToUserEditDto(currentUser));
             return "integrated:editProfile";
         }
 
-
-        //check new password
         if (!passwordChangeForm.getNewPassword().equals(passwordChangeForm.getNewPasswordConfirm())) {
-            model.addAttribute("passwordchangeform", new PasswordChangeForm());
-            model.addAttribute("error", "New password doesn't match");
+            model.addAttribute("passwordError", "New passwords don't match");
+            model.addAttribute("user", userService.convertToUserEditDto(currentUser));
             return "integrated:editProfile";
         }
 
-        //crypt password
-        String hashedPassword = passwordEncoder.encode(passwordChangeForm.getNewPassword());
+        userService.updatePassword(currentUser, passwordChangeForm.getNewPassword());
 
-        oldUser.setPassword(hashedPassword);
-
-        //save to db
-        oldUser = userDAO.update(user, oldUser);
-
-        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(oldUser, authentication.getCredentials(), oldUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-
-        return "integrated:home";
-    }
-
-    private HashMap<Integer, Order> sortByDate(HashMap<Integer, Order> orders) {
-        // Create a list from the entries of the original HashMap
-        List<Map.Entry<Integer, Order>> entryList = new ArrayList<>(orders.entrySet());
-
-        // Sort the list based on the order date using a custom comparator
-        entryList.sort(Comparator.comparing(entry -> entry.getValue().getDate()));
-
-        // Create a new LinkedHashMap to maintain the order
-        HashMap<Integer, Order> sortedOrders = new LinkedHashMap<>();
-        for (Map.Entry<Integer, Order> entry : entryList) {
-            sortedOrders.put(entry.getKey(), entry.getValue());
-        }
-
-        return sortedOrders;
+        return "redirect:/profile/edit";
     }
 }
-*/

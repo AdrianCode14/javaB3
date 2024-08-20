@@ -66,6 +66,20 @@
       </td>
     </tr>
     <tr>
+      <td><label for="nickname">Surnom (facultatif):</label></td>
+      <td>
+        <form:input path="nickname" id="nickname" />
+        <form:errors path="nickname" cssStyle="color: red;" />
+      </td>
+    </tr>
+    <tr>
+      <td><label for="favoriteColor">Couleur préférée (facultatif):</label></td>
+      <td>
+        <form:input path="favoriteColor" id="favoriteColor" />
+        <form:errors path="favoriteColor" cssStyle="color: red;" />
+      </td>
+    </tr>
+    <tr>
       <td colspan="2"><input type="submit" value="S'inscrire" /></td>
     </tr>
   </table>

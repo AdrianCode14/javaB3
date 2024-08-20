@@ -1,39 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="include/importTags.jsp"%>
 
-<jsp:include page="/WEB-INF/jsp/include/importTags.jsp" />
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title><fmt:message key="page.description.title" /></title>
-</head>
-<body>
-<h1><fmt:message key="page.description.welcome" /></h1>
-<p>
-    <fmt:message key="page.description.intro" />
-</p>
+<div class="container">
+    <h1 class="my-4"><spring:message code="society.title"/></h1>
 
-<h2><fmt:message key="page.description.services" /></h2>
-<ul>
-    <li><fmt:message key="page.description.service1" /></li>
-    <li><fmt:message key="page.description.service2" /></li>
-    <li><fmt:message key="page.description.service3" /></li>
-    <li><fmt:message key="page.description.service4" /></li>
-    <li><fmt:message key="page.description.service5" /></li>
-</ul>
+    <div class="row">
+        <div class="col-md-8">
+            <p><spring:message code="society.description"/></p>
+        </div>
+        <div class="col-md-4">
+            <img src="<c:url value='/images/bookstore.jpg'/>" alt="Our Bookstore" class="img-fluid rounded mb-3">
+        </div>
+    </div>
 
-<h2><fmt:message key="page.description.location" /></h2>
-<p>
-    <fmt:message key="page.description.location.info" />
-</p>
+    <h2 class="mt-4"><spring:message code="society.mission.title"/></h2>
+    <p><spring:message code="society.mission.description"/></p>
 
-<h2><fmt:message key="page.description.contact" /></h2>
-<p>
-    <fmt:message key="page.description.contact.address" /><br>
-    <fmt:message key="page.description.contact.phone" /><br>
-    <fmt:message key="page.description.contact.email" />
-</p>
+    <h2 class="mt-4"><spring:message code="society.values.title"/></h2>
+    <ul>
+        <li><spring:message code="society.values.item1"/></li>
+        <li><spring:message code="society.values.item2"/></li>
+        <li><spring:message code="society.values.item3"/></li>
+    </ul>
 
-<footer>
-    &copy; 2024 OurBookshop
-</footer>
-</body>
-</html>
+    <h2 class="mt-4"><spring:message code="society.contact.title"/></h2>
+    <address>
+        <strong>BookShop</strong><br>
+        123 Livre Street<br>
+        75000 Paris, France<br>
+        <abbr title="Phone">P:</abbr> +33 1 23 45 67 89
+    </address>
+</div>

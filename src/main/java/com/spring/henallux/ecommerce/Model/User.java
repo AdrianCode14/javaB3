@@ -25,6 +25,8 @@ public class User implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    private String nickname;
+    private String favoriteColor;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
