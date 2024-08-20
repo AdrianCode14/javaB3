@@ -70,6 +70,8 @@ public class RegisterController {
         user.setLastName(dto.getLastName());
         user.setDeliveryAddress(dto.getDeliveryAddress());
         user.setPhoneNumber(dto.getPhoneNumber());
+        user.setNickname(dto.getNickname());
+        user.setFavoriteColor(dto.getFavoriteColor());
         return user;
     }
 }

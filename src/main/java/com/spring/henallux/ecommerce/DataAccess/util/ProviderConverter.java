@@ -29,6 +29,8 @@ public class ProviderConverter {
             user.setAccountNonLocked(entity.isAccountNonLocked());
             user.setCredentialsNonExpired(entity.isCredentialsNonExpired());
             user.setEnabled(entity.isEnabled());
+            user.setNickname(entity.getNickname());
+            user.setFavoriteColor(entity.getFavoriteColor());
             return user;
         });
     }
@@ -50,6 +52,8 @@ public class ProviderConverter {
             entity.setAccountNonLocked(model.isAccountNonLocked());
             entity.setCredentialsNonExpired(model.isCredentialsNonExpired());
             entity.setEnabled(model.isEnabled());
+            entity.setNickname(model.getNickname());
+            entity.setFavoriteColor(model.getFavoriteColor());
             return entity;
         });
     }

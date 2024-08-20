@@ -47,4 +47,11 @@ public class UserEntity {
 
     @Column(name = "enabled")
     private boolean enabled;
+
+    @Column(name = "nickname", nullable = true)
+    private String nickname;
+
+    @Column(name = "favorite_color", nullable = true)
+    private String favoriteColor;
+
 }

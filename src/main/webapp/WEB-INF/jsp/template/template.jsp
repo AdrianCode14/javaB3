@@ -35,7 +35,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item"><a class="nav-link" href="<spring:url value='/home'/>"><spring:message code="link.home" /></a></li>
-        <li class="nav-item"><a class="nav-link" href="<spring:url value='/society'/>"><spring:message code="link.society" /></a></li>
+        <li class="nav-item"><a class="nav-link" href="<spring:url value='/societyDescription'/>"><spring:message code="link.society" /></a></li>
         <li class="nav-item">
           <a class="nav-link" href="<spring:url value='/catalogue'/>"><spring:message code="link.catalog" /></a>
         </li>
@@ -47,6 +47,11 @@
           <li class="nav-item"><a class="nav-link" href="<spring:url value='/register'/>"><spring:message code="link.register" /></a></li>
         </sec:authorize>
         <sec:authorize access="isAuthenticated()">
+          <li class="nav-item">
+            <a class="nav-link" href="<spring:url value='/profile/edit'/>">
+              <spring:message code="link.edit.profile" />
+            </a>
+          </li>
           <li class="nav-item">
             <form action="<spring:url value='/logout'/>" method="post" class="form-inline">
               <button type="submit" class="btn btn-link nav-link"><spring:message code="link.logout" /></button>

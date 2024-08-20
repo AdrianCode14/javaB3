@@ -1,14 +1,14 @@
 package com.spring.henallux.ecommerce.Model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-public class UserRegistrationDto {
+public class UserEditDto {
     private String email;
-    private String password;
-    private String passwordConfirm;
     private String firstName;
     private String lastName;
     private String deliveryAddress;
@@ -18,14 +18,6 @@ public class UserRegistrationDto {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getPasswordConfirm() {
-        return passwordConfirm;
     }
 
     public String getFirstName() {
@@ -44,24 +36,16 @@ public class UserRegistrationDto {
         return phoneNumber;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public String getFavoriteColor() {
+        return favoriteColor;
+    }
+
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public void setDeliveryAddress(String deliveryAddress) {
@@ -72,12 +56,12 @@ public class UserRegistrationDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getNickname() {
-        return nickname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getFavoriteColor() {
-        return favoriteColor;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public void setNickname(String nickname) {
