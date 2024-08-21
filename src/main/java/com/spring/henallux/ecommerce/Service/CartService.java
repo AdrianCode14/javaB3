@@ -1,10 +1,12 @@
 package com.spring.henallux.ecommerce.Service;
 
 import com.spring.henallux.ecommerce.Model.Cart;
+import com.spring.henallux.ecommerce.Model.CartItem;
 import com.spring.henallux.ecommerce.Model.Product;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 @Service
 public class CartService {
@@ -52,6 +54,14 @@ public class CartService {
         } else {
             cart.updateQuantity(productId, quantity);
         }
+    }
+
+    public Map<Integer, CartItem> getCartItems(Cart cart) {
+        return cart.getItems();
+    }
+
+    public double getTotalPrice(Cart cart) {
+        return calculateTotalWithDiscount(cart);
     }
 
 

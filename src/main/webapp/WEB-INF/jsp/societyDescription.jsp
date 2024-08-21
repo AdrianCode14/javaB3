@@ -9,7 +9,7 @@
             <p><spring:message code="society.description"/></p>
         </div>
         <div class="col-md-4">
-            <img src="<c:url value='/images/bookstore.jpg'/>" alt="Our Bookstore" class="img-fluid rounded mb-3">
+            <img src="<c:url value='/images/bookstore.png'/>" alt="Our Bookstore" class="img-fluid rounded mb-3">
         </div>
     </div>
 

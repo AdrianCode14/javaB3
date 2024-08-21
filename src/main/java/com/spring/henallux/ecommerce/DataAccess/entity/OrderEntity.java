@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -14,22 +15,22 @@ import java.util.List;
 public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
     private Integer orderId;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(nullable = false)
+    private Date date;
 
-    @Column(name = "order_status")
+    @Column(nullable = false)
     private String orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private com.spring.henallux.ecommerce.DataAccess.entity.UserEntity user;
+    private UserEntity user;
 
-    @Column(name = "total_price")
+    @Column(nullable = false)
     private Double totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineEntity> orderLines;
+
 }

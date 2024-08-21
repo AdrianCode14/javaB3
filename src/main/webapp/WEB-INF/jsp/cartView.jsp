@@ -48,10 +48,9 @@
             </tr>
             </tfoot>
         </table>
-
         <!-- Formulaire pour initier le paiement -->
-        <form action="<c:url value='/pay'/>" method="post">
-            <button type="submit" class="btn btn-primary"><spring:message code="cart.checkout" /></button>
+        <form action="<c:url value='/cart/confirm'/>" method="post">
+            <button type="submit" class="btn btn-primary"><spring:message code="cart.proceedToCheckout" /></button>
         </form>
     </c:if>
 

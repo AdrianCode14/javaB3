@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -18,7 +19,6 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
-
     @Autowired
     private ProductService productService; // Ajoutez ce service pour obtenir les produits
 
@@ -61,5 +61,22 @@ public class CartController {
         Cart cart = cartService.getCart(session); // Obtenez le panier depuis la session
         cartService.updateQuantity(cart, productId, quantity);
         return "redirect:/cart"; // Redirige vers la vue du panier
+    }
+
+    @PostMapping("/confirm")
+    public String confirmOrder(Model model, HttpSession session) {
+        if (!isUserAuthenticated()) {
+            return "redirect:/login";
+        }
+        Cart cart = cartService.getCart(session);
+        model.addAttribute("cartItems", cart.getItems());
+        model.addAttribute("totalPrice", cartService.calculateTotalWithDiscount(cart));
+        return "integrated:confirmOrder";
+    }
+
+    private boolean isUserAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() &&
+                !(authentication.getPrincipal() instanceof String);
     }
 }

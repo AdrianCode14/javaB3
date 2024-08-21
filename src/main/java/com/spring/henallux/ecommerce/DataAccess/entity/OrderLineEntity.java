@@ -12,13 +12,12 @@ import javax.persistence.*;
 public class OrderLineEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "line_id")
     private Integer lineId;
 
-    @Column(name = "unit_price")
+    @Column(nullable = false)
     private Double unitPrice;
 
-    @Column(name = "quantity")
+    @Column(nullable = false)
     private Integer quantity;
 
     @ManyToOne
@@ -28,4 +27,5 @@ public class OrderLineEntity {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
+
 }

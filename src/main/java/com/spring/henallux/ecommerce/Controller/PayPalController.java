@@ -1,14 +1,25 @@
 package com.spring.henallux.ecommerce.Controller;
 
 import com.paypal.api.payments.Links;
-import com.spring.henallux.ecommerce.Service.PaypalService;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import com.spring.henallux.ecommerce.DataAccess.entity.OrderEntity;
+import com.spring.henallux.ecommerce.DataAccess.entity.UserEntity;
+import com.spring.henallux.ecommerce.Model.Order;
+import com.spring.henallux.ecommerce.Model.OrderStatus;
+import com.spring.henallux.ecommerce.Model.User;
+import com.spring.henallux.ecommerce.Model.Cart;
+import com.spring.henallux.ecommerce.Service.CartService;
+import com.spring.henallux.ecommerce.Service.OrderService;
+import com.spring.henallux.ecommerce.Service.PaypalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/pay")
@@ -17,47 +28,68 @@ public class PayPalController {
     @Autowired
     private PaypalService paypalService;
 
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private OrderService orderService;
+
     @PostMapping
-    public RedirectView pay() {
-        System.out.println("Pay method called");
+    public RedirectView pay(HttpSession session) {
+        Cart cart = cartService.getCart(session);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+
         try {
+            // Créer la commande
+            OrderEntity order = orderService.createOrderFromCart(cart, user);
+
+            // Créer le paiement PayPal
             Payment payment = paypalService.createPayment(
-                    20.00,
+                    order.getTotalPrice(),
                     "USD",
                     "paypal",
                     "sale",
-                    "Description du paiement",
-                    "http://localhost:8081/firstSpring/cancel",
-                    "http://localhost:8081/firstSpring/success"
+                    "Payment for order " + order.getOrderId(),
+                    "http://localhost:8081/firstSpring/pay/cancel",
+                    "http://localhost:8081/firstSpring/pay/success"
             );
 
-            System.out.println("Payment created successfully: " + payment);
-
-            List<Links> links = payment.getLinks();
-            for (Links link : links) {
+            for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
-                    System.out.println("Redirecting to approval URL: " + link.getHref());
                     return new RedirectView(link.getHref());
                 }
             }
 
-            System.err.println("Approval URL not found in payment links");
         } catch (PayPalRESTException e) {
             e.printStackTrace();
-            System.err.println("PayPalRESTException occurred: " + e.getMessage());
         }
-        return new RedirectView("/");
+        return new RedirectView("/error");
     }
 
     @GetMapping("/cancel")
-    public String cancelPay() {
-        return "integrated:error";
+    public String cancelPay(@RequestParam("orderId") Integer orderId) {
+        orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+        return "redirect:/order/cancelled?orderId=" + orderId;
     }
 
-    @RequestMapping(value = "/success", method = RequestMethod.GET)
-    public String successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId) {
-        // rediriger vers une page jsp avec paiement réussi et un lien pour retourner à l'accueil
-        System.out.println("Payment succeeded with paymentId: " + paymentId + " and payerId: " + payerId);
-        return "integrated:home";
+    @GetMapping("/success")
+    public String successPay(@RequestParam("paymentId") String paymentId,
+                             @RequestParam("PayerID") String payerId,
+                             @RequestParam("orderId") Integer orderId) {
+        try {
+            Payment payment = paypalService.executePayment(paymentId, payerId);
+            if (payment.getState().equals("approved")) {
+                orderService.updateOrderStatus(orderId, OrderStatus.SHIPPED);
+                return "redirect:/order/confirmation?orderId=" + orderId;
+            } else {
+                orderService.updateOrderStatus(orderId, OrderStatus.FAILED);
+                return "redirect:/order/failed?orderId=" + orderId;
+            }
+        } catch (PayPalRESTException e) {
+            e.printStackTrace();
+            orderService.updateOrderStatus(orderId, OrderStatus.FAILED);
+            return "redirect:/order/failed?orderId=" + orderId;
+        }
     }
 }
