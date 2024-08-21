@@ -18,7 +18,7 @@
     <div class="product-list">
         <c:forEach var="product" items="${products}">
             <div class="product-item">
-                <h2>${product.getLocalizedLabel(locale.language)}</h2>
+                <h2><a href="<c:url value='/catalogue/product/${product.productId}'/>">${product.getLocalizedLabel(locale.language)}</a></h2>
                 <p>${product.getLocalizedDescription(locale.language)}</p>
                 <p class="price"><spring:message code="cart.price" />: ${product.price}</p>
                 <form action="<c:url value='/cart/add'/>" method="post">

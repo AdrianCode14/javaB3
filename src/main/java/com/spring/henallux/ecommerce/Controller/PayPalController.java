@@ -22,7 +22,7 @@ public class PayPalController {
         System.out.println("Pay method called");
         try {
             Payment payment = paypalService.createPayment(
-                    20.00,
+                    0.01,
                     "USD",
                     "paypal",
                     "sale",
