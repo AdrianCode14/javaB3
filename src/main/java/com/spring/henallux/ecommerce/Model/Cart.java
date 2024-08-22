@@ -16,6 +16,9 @@ public class Cart {
     }
 
     public void addItem(Product product, int quantity) {
+        if (product.getProductId() == null) {
+            throw new IllegalArgumentException("Product ID cannot be null");
+        }
         int productId = product.getProductId();
         CartItem item = items.get(productId);
         if (item == null) {

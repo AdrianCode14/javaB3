@@ -1,6 +1,5 @@
-package com.spring.henallux.firstSpringProject;
+package com.spring.henallux.ecommerce;
 
-import com.spring.henallux.ecommerce.FirstSpringProjectApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

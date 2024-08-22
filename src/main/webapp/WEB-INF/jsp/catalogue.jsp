@@ -18,23 +18,25 @@
     </form>
 
     <div class="row">
-        <c:forEach var="product" items="${products}">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.getLocalizedLabel(locale.language)}</h5>
-                        <p class="card-text">${product.getLocalizedDescription(locale.language)}</p>
-                        <p class="card-text"><strong><spring:message code="cart.price" />: ${product.price}</strong></p>
+    <c:forEach var="product" items="${products}">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">${product.getLocalizedLabel(locale.language)}</h5>
+                    <p class="card-text"><strong><spring:message code="cart.price" />: ${product.price}</strong></p>
+                    <div class="d-flex justify-content-between">
                         <form action="<c:url value='/cart/add'/>" method="post">
                             <input type="hidden" name="productId" value="${product.productId}" />
-                            <div class="input-group mb-3">
-                                <input type="number" name="quantity" value="1" min="1" class="form-control" />
+                            <div class="input-group">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control" style="width: 60px;" />
                                 <button type="submit" class="btn btn-primary"><spring:message code="cart.placeOrder" /></button>
                             </div>
                         </form>
+                        <a href="<c:url value='/product/${product.labelEn}-${product.productId}'/>" class="btn btn-secondary"><spring:message code="product.details" /></a>
                     </div>
                 </div>
             </div>
-        </c:forEach>
+        </div>
+    </c:forEach>
     </div>
 </div>

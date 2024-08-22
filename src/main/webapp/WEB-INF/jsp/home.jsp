@@ -18,7 +18,7 @@
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="<c:url value='/images/book1.jpg'/>" class="card-img-top" alt="Book 1" onerror="this.src='<c:url value='/images/book1.jpg'/>';">
+                    <img src="<c:url value='/images/book1.jpg'/>" class="card-img-top" alt="Book 1">
                     <div class="card-body">
                         <h5 class="card-title"><spring:message code="page.home.book1.title" /></h5>
                         <p class="card-text"><spring:message code="page.home.book1.description" /></p>
@@ -27,7 +27,7 @@
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="<c:url value='/images/book2.jpg'/>" class="card-img-top" alt="Book 2" onerror="this.src='<c:url value='/images/book2.jpg'/>';">
+                    <img src="<c:url value='/images/book2.jpg'/>" class="card-img-top" alt="Book 2">
                     <div class="card-body">
                         <h5 class="card-title"><spring:message code="page.home.book2.title" /></h5>
                         <p class="card-text"><spring:message code="page.home.book2.description" /></p>
@@ -36,7 +36,7 @@
             </div>
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="<c:url value='/images/book3.jpg'/>" class="card-img-top" alt="Book 3" onerror="this.src='<c:url value='/images/book3.jpg'/>';">
+                    <img src="<c:url value='/images/book3.jpg'/>" class="card-img-top" alt="Book 3">
                     <div class="card-body">
                         <h5 class="card-title"><spring:message code="page.home.book3.title" /></h5>
                         <p class="card-text"><spring:message code="page.home.book3.description" /></p>

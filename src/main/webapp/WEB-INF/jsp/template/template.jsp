@@ -19,9 +19,11 @@
       <div class="col-md-6">
         <h1 class="mb-0">BookShop</h1>
       </div>
-      <div class="language-selector">
-        <a href="?lang=fr"><img src="<c:url value='/images/fr.png'/>" alt="Français" /></a>
-        <a href="?lang=en"><img src="<c:url value='/images/engl.png'/>" alt="English" /></a>
+      <div class="col-md-6 text-end">
+        <div class="language-selector">
+          <a href="?lang=fr"><img src="<c:url value='/images/fr.png'/>" alt="Français" class="img-fluid" style="max-width: 20px;" /></a>
+          <a href="?lang=en"><img src="<c:url value='/images/engl.png'/>" alt="English" class="img-fluid" style="max-width: 20px;" /></a>
+        </div>
       </div>
     </div>
   </div>
