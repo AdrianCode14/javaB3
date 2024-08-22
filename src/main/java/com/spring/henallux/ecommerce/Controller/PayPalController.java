@@ -3,8 +3,6 @@ package com.spring.henallux.ecommerce.Controller;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
-import com.spring.henallux.ecommerce.DataAccess.entity.OrderEntity;
-import com.spring.henallux.ecommerce.DataAccess.entity.UserEntity;
 import com.spring.henallux.ecommerce.Model.Order;
 import com.spring.henallux.ecommerce.Model.OrderStatus;
 import com.spring.henallux.ecommerce.Model.User;
@@ -42,7 +40,7 @@ public class PayPalController {
 
         try {
             // Créer la commande
-            OrderEntity order = orderService.createOrderFromCart(cart, user);
+            Order order = orderService.createOrderFromCart(cart, user);
 
             // Créer le paiement PayPal
             Payment payment = paypalService.createPayment(
@@ -51,8 +49,8 @@ public class PayPalController {
                     "paypal",
                     "sale",
                     "Payment for order " + order.getOrderId(),
-                    "http://localhost:8081/firstSpring/pay/cancel",
-                    "http://localhost:8081/firstSpring/pay/success"
+                    "http://localhost:8081/firstSpring/pay/cancel?orderId=" + order.getOrderId(),
+                    "http://localhost:8081/firstSpring/pay/success?orderId=" + order.getOrderId()
             );
 
             for (Links link : payment.getLinks()) {

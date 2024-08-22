@@ -19,7 +19,7 @@
             <p><strong><spring:message code="orderConfirmation.total" />:</strong> <fmt:formatNumber value="${order.totalPrice}" type="currency" currencySymbol="€" /></p>
         </div>
 
-        <a href="<c:url value='/home' />" class="btn btn-primary"><spring:message code="orderConfirmation.backToHome" /></a>
+        <a href="<c:url value='/' />" class="btn btn-primary"><spring:message code="orderConfirmation.backToHome" /></a>
     </div>
 </body>
 </html>

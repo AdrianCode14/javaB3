@@ -19,7 +19,7 @@
         </div>
 
         <a href="<c:url value='/cart' />" class="btn btn-primary"><spring:message code="orderFailed.backToCart" /></a>
-        <a href="<c:url value='/home' />" class="btn btn-secondary"><spring:message code="orderFailed.backToHome" /></a>
+        <a href="<c:url value='/' />" class="btn btn-secondary"><spring:message code="orderFailed.backToHome" /></a>
     </div>
 </body>
 </html>

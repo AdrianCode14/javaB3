@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -23,12 +24,13 @@ public class ProductController {
 
     @GetMapping("/product/{productName}-{productId}")
     public String product(@PathVariable String productName, @PathVariable Integer productId, Model model, Locale locale) {
-        Product product = productDAO.findByLabelEnAndId(productName, productId);
+        Product product = productDAO.findByLabelEnAndId(productName, productId)
+                .orElse(null); // Utilise orElse pour gérer le cas où le produit n'est pas trouvé
 
         if (product == null)
             return "redirect:/error";
 
-        ArrayList<Product> similarProducts = productDAO.findByCategory(product.getCategory());
+        List<Product> similarProducts = productDAO.findByCategory(product.getCategory());
 
         // Remove the current product from the list
         int finalProductId = product.getProductId();

@@ -1,7 +1,7 @@
 package com.spring.henallux.ecommerce.Controller;
 
-import org.springframework.ui.Model;  // Changez cet import
-import com.spring.henallux.ecommerce.DataAccess.entity.OrderEntity;
+import org.springframework.ui.Model;
+import com.spring.henallux.ecommerce.Model.Order;
 import com.spring.henallux.ecommerce.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +18,7 @@ public class OrderController {
 
     @GetMapping("/confirmation")
     public String orderConfirmation(@RequestParam("orderId") Integer orderId, Model model) {
-        OrderEntity order = orderService.getOrderById(orderId)
+        Order order = orderService.getOrderById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         model.addAttribute("order", order);
         return "orderConfirmation";
@@ -26,7 +26,7 @@ public class OrderController {
 
     @GetMapping("/failed")
     public String orderFailed(@RequestParam("orderId") Integer orderId, Model model) {
-        OrderEntity order = orderService.getOrderById(orderId)
+        Order order = orderService.getOrderById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         model.addAttribute("order", order);
         return "orderFailed";
@@ -34,7 +34,7 @@ public class OrderController {
 
     @GetMapping("/cancelled")
     public String orderCancelled(@RequestParam("orderId") Integer orderId, Model model) {
-        OrderEntity order = orderService.getOrderById(orderId)
+        Order order = orderService.getOrderById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         model.addAttribute("order", order);
         return "orderCancelled";

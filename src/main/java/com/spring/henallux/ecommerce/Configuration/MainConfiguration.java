@@ -27,6 +27,8 @@ public class MainConfiguration implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         CookieLocaleResolver resolver = new CookieLocaleResolver();
         resolver.setDefaultLocale(new Locale("fr"));
+        resolver.setCookieName("myLocaleCookie");
+        resolver.setCookieMaxAge(4800);
         return resolver;
     }
 
@@ -44,7 +46,7 @@ public class MainConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/css/**").addResourceLocations("/css/");
-        registry.addResourceHandler("/images/**").addResourceLocations("/images/");
+        registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");
+        registry.addResourceHandler("/images/**").addResourceLocations("classpath:/static/images/");
     }
 }

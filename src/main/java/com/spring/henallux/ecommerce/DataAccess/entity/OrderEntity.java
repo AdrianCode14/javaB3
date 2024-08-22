@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +32,6 @@ public class OrderEntity {
     private Double totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderLineEntity> orderLines;
+    private List<OrderLineEntity> orderLines = new ArrayList<>();;
 
 }

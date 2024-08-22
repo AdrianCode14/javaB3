@@ -8,15 +8,18 @@ import com.spring.henallux.ecommerce.DataAccess.repository.ProductRepository;
 import com.spring.henallux.ecommerce.DataAccess.util.ProviderConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductDAO implements ProductDataAccess {
 
-    private ProductRepository productRepository;
-    private ProviderConverter providerConverter;
+    private final ProductRepository productRepository;
+    private final ProviderConverter providerConverter;
 
     @Autowired
     public ProductDAO(ProductRepository productRepository, ProviderConverter providerConverter) {
@@ -25,32 +28,37 @@ public class ProductDAO implements ProductDataAccess {
     }
 
     @Override
-    public Product findById(int id) {
+    @Transactional(readOnly = true)
+    public Optional<Product> findById(int id) {
         ProductEntity productEntity = productRepository.findById(id);
-        return productEntity != null ? providerConverter.productEntityToProduct(productEntity) : null;
+        return Optional.ofNullable(productEntity)
+                .map(providerConverter::productEntityToProduct);
     }
 
     @Override
-    public Product findByLabelEnAndId(String labelEn, int id) {
+    @Transactional(readOnly = true)
+    public Optional<Product> findByLabelEnAndId(String labelEn, int id) {
         ProductEntity productEntity = productRepository.findByLabelEnAndProductId(labelEn, id);
-        return productEntity != null ? providerConverter.productEntityToProduct(productEntity) : null;
+        return Optional.ofNullable(productEntity)
+                .map(providerConverter::productEntityToProduct);
     }
 
     @Override
-    public ArrayList<Product> findByCategory(Category category) {
+    @Transactional(readOnly = true)
+    public List<Product> findByCategory(Category category) {
         CategoryEntity categoryEntity = providerConverter.categoryToCategoryEntity(category);
-        ArrayList<ProductEntity> productEntities = productRepository.findAllByCategory(categoryEntity);
+        List<ProductEntity> productEntities = productRepository.findAllByCategory(categoryEntity);
         return productEntities.stream()
                 .map(providerConverter::productEntityToProduct)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
-
     @Override
-    public ArrayList<Product> findAll() {
-        ArrayList<ProductEntity> productEntities = productRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<Product> findAll() {
+        List<ProductEntity> productEntities = productRepository.findAll();
         return productEntities.stream()
                 .map(providerConverter::productEntityToProduct)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 }

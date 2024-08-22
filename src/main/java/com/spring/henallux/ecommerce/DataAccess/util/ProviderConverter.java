@@ -1,5 +1,7 @@
 package com.spring.henallux.ecommerce.DataAccess.util;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import com.spring.henallux.ecommerce.Model.*;
 import com.spring.henallux.ecommerce.DataAccess.entity.*;
@@ -25,10 +27,10 @@ public class ProviderConverter {
             user.setDeliveryAddress(entity.getDeliveryAddress());
             user.setPhoneNumber(entity.getPhoneNumber());
             user.setAuthorities(entity.getAuthorities());
-            user.setAccountNonExpired(entity.isAccountNonExpired());
-            user.setAccountNonLocked(entity.isAccountNonLocked());
-            user.setCredentialsNonExpired(entity.isCredentialsNonExpired());
-            user.setEnabled(entity.isEnabled());
+            user.setAccountNonExpired(entity.getAccountNonExpired() != null ? entity.getAccountNonExpired() : true);
+            user.setAccountNonLocked(entity.getAccountNonLocked() != null ? entity.getAccountNonLocked() : true);
+            user.setCredentialsNonExpired(entity.getCredentialsNonExpired() != null ? entity.getCredentialsNonExpired() : true);
+            user.setEnabled(entity.getEnabled() != null ? entity.getEnabled() : true);
             user.setNickname(entity.getNickname());
             user.setFavoriteColor(entity.getFavoriteColor());
             return user;
@@ -104,6 +106,61 @@ public class ProviderConverter {
             entity.setCategoryId(model.getCategoryId());
             entity.setLabelEn(model.getLabelEn());
             entity.setLabelFr(model.getLabelFr());
+            return entity;
+        });
+    }
+    public Order orderEntityToOrder(OrderEntity orderEntity) {
+        return convert(orderEntity, entity -> {
+            Order order = new Order();
+            order.setOrderId(entity.getOrderId());
+            order.setDate(entity.getDate());
+            order.setOrderStatus(entity.getOrderStatus());
+            order.setUser(userEntityToUser(entity.getUser()));
+            order.setTotalPrice(entity.getTotalPrice());
+            if (entity.getOrderLines() != null) {
+                order.setOrderLines(entity.getOrderLines().stream()
+                        .map(this::orderLineEntityToOrderLine)
+                        .collect(Collectors.toList()));
+            } else {
+                order.setOrderLines(new ArrayList<>());
+            }
+            return order;
+        });
+    }
+
+    public OrderEntity orderToOrderEntity(Order order) {
+        return convert(order, model -> {
+            OrderEntity entity = new OrderEntity();
+            entity.setOrderId(model.getOrderId());
+            entity.setDate(model.getDate());
+            entity.setOrderStatus(model.getOrderStatus());
+            entity.setUser(userToUserEntity(model.getUser()));
+            entity.setTotalPrice(model.getTotalPrice());
+            entity.setOrderLines(model.getOrderLines().stream()
+                    .map(this::orderLineToOrderLineEntity)
+                    .collect(Collectors.toList()));
+            return entity;
+        });
+    }
+
+    public OrderLine orderLineEntityToOrderLine(OrderLineEntity orderLineEntity) {
+        return convert(orderLineEntity, entity -> {
+            OrderLine orderLine = new OrderLine();
+            orderLine.setLineId(entity.getLineId());
+            orderLine.setUnitPrice(entity.getUnitPrice());
+            orderLine.setQuantity(entity.getQuantity());
+            orderLine.setProduct(productEntityToProduct(entity.getProduct()));
+            return orderLine;
+        });
+    }
+
+    public OrderLineEntity orderLineToOrderLineEntity(OrderLine orderLine) {
+        return convert(orderLine, model -> {
+            OrderLineEntity entity = new OrderLineEntity();
+            entity.setLineId(model.getLineId());
+            entity.setUnitPrice(model.getUnitPrice());
+            entity.setQuantity(model.getQuantity());
+            entity.setProduct(productToProductEntity(model.getProduct()));
             return entity;
         });
     }
