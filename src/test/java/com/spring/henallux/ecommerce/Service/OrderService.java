@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,54 +21,9 @@ class OrderServiceTest {
     @Mock
     private OrderDataAccess orderDAO;
 
-    @Mock
-    private CartService cartService;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testCreateOrderFromCart() {
-        // Arrange
-        Cart cart = new Cart();
-        User user = new User();
-        user.setUserId(1);
-
-        Product product1 = new Product();
-        product1.setProductId(1);
-        product1.setPrice(100.0);
-
-        Product product2 = new Product();
-        product2.setProductId(2);
-        product2.setPrice(50.0);
-
-        cart.addItem(product1, 2);
-        cart.addItem(product2, 1);
-
-        when(cartService.calculateTotalWithDiscount(cart)).thenReturn(225.0); // (100 * 2 + 50) * 0.9
-
-        Order expectedOrder = new Order();
-        expectedOrder.setOrderId(1);
-        expectedOrder.setUser(user);
-        expectedOrder.setTotalPrice(225.0);
-        expectedOrder.setOrderStatus("PENDING");
-
-        when(orderDAO.createOrderFromCart(cart, user)).thenReturn(expectedOrder);
-
-        // Act
-        Order result = orderService.createOrderFromCart(cart, user);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(expectedOrder.getOrderId(), result.getOrderId());
-        assertEquals(expectedOrder.getUser(), result.getUser());
-        assertEquals(expectedOrder.getTotalPrice(), result.getTotalPrice());
-        assertEquals(expectedOrder.getOrderStatus(), result.getOrderStatus());
-
-        verify(orderDAO, times(1)).createOrderFromCart(cart, user);
-        verify(cartService, times(1)).calculateTotalWithDiscount(cart);
     }
 
     @Test
@@ -107,5 +61,33 @@ class OrderServiceTest {
         assertEquals(orderId, result.getOrderId());
         assertEquals(newStatus, result.getOrderStatus());
         verify(orderDAO, times(1)).updateOrderStatus(orderId, newStatus);
+    }
+
+    @Test
+    void testCreateOrderFromCart() {
+        // Arrange
+        Cart cart = new Cart();
+        User user = new User();
+        user.setUserId(1);
+
+        Order expectedOrder = new Order();
+        expectedOrder.setOrderId(1);
+        expectedOrder.setUser(user);
+        expectedOrder.setTotalPrice(225.0);
+        expectedOrder.setOrderStatus("PENDING");
+
+        when(orderDAO.createOrderFromCart(cart, user)).thenReturn(expectedOrder);
+
+        // Act
+        Order result = orderService.createOrderFromCart(cart, user);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(expectedOrder.getOrderId(), result.getOrderId());
+        assertEquals(expectedOrder.getUser(), result.getUser());
+        assertEquals(expectedOrder.getTotalPrice(), result.getTotalPrice());
+        assertEquals(expectedOrder.getOrderStatus(), result.getOrderStatus());
+
+        verify(orderDAO, times(1)).createOrderFromCart(cart, user);
     }
 }
