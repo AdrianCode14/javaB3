@@ -19,7 +19,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String[] AUTHORIZED_REQUESTS_ANYBODY = new String[]{
             "/", "/register", "/cart", "/cart/**", "/product/**", "/search",
             "/infos/**", "/assets/**", "/login", "/search-product",
-            "/error", "/society", "/catalogue"
+            "/error", "/societyDescription", "/catalogue", "/images/**"
     };
     private static final String[] AUTHORIZED_REQUESTS_ADMIN = new String[]{"/admin"};
 
@@ -38,7 +38,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Désactive CSRF pour simplifier (à utiliser avec précaution en production)
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTHORIZED_REQUESTS_ADMIN).hasRole("ADMIN")
                 .antMatchers(AUTHORIZED_REQUESTS_ANYBODY).permitAll()

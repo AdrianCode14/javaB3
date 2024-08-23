@@ -1,12 +1,13 @@
 package com.spring.henallux.ecommerce.Service;
 
 import com.spring.henallux.ecommerce.Model.Cart;
-import com.spring.henallux.ecommerce.Model.CartItem;
 import com.spring.henallux.ecommerce.Model.Product;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 
 @Service
 public class CartService {
@@ -26,9 +27,11 @@ public class CartService {
     public double calculateTotalWithDiscount(Cart cart) {
         double total = cart.calculateTotal();
         if (cart.getItemCount() >= DISCOUNT_THRESHOLD) {
-            return total * (1 - DISCOUNT_RATE);
+            total *= (1 - DISCOUNT_RATE);
         }
-        return total;
+        return BigDecimal.valueOf(total)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     public void addToCart(Cart cart, Product product, int quantity) {
@@ -55,14 +58,5 @@ public class CartService {
             cart.updateQuantity(productId, quantity);
         }
     }
-
-    public Map<Integer, CartItem> getCartItems(Cart cart) {
-        return cart.getItems();
-    }
-
-    public double getTotalPrice(Cart cart) {
-        return calculateTotalWithDiscount(cart);
-    }
-
 
 }
